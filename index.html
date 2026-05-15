@@ -1,6 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BITCRUSHER v2.0</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
 :root {
   --green: #00ff41;
   --dark-green: #00b32c;
@@ -10,8 +17,18 @@
   --border: #00ff4133;
   --scanline: rgba(0,255,65,0.03);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: transparent; }
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #050505;
+  padding: 20px;
+}
+
 #app {
   font-family: 'Share Tech Mono', monospace;
   background: var(--bg);
@@ -22,16 +39,30 @@ body { background: transparent; }
   position: relative;
   overflow: hidden;
   min-height: 520px;
+  max-width: 900px;
+  margin: auto;
 }
+
 #app::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, var(--scanline) 2px, var(--scanline) 4px);
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    var(--scanline) 2px,
+    var(--scanline) 4px
+  );
   pointer-events: none;
   z-index: 0;
 }
-.content { position: relative; z-index: 1; }
+
+.content {
+  position: relative;
+  z-index: 1;
+}
+
 .title-bar {
   font-family: 'VT323', monospace;
   font-size: 2.2rem;
@@ -43,9 +74,22 @@ body { background: transparent; }
   align-items: center;
   gap: 12px;
 }
-.blink { animation: blink 1s step-end infinite; }
-@keyframes blink { 50% { opacity: 0; } }
-.subtitle { font-size: 11px; color: var(--dark-green); margin-bottom: 1.5rem; letter-spacing: 1px; }
+
+.blink {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.subtitle {
+  font-size: 11px;
+  color: var(--dark-green);
+  margin-bottom: 1.5rem;
+  letter-spacing: 1px;
+}
+
 .drop-zone {
   border: 1.5px dashed var(--dark-green);
   border-radius: 4px;
@@ -56,26 +100,47 @@ body { background: transparent; }
   margin-bottom: 1.5rem;
   background: var(--dim-green);
 }
-.drop-zone:hover, .drop-zone.drag-over {
+
+.drop-zone:hover,
+.drop-zone.drag-over {
   border-color: var(--green);
   background: #001a07;
 }
-.drop-zone .icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
-.drop-zone p { font-size: 13px; color: var(--dark-green); }
-.drop-zone p span { color: var(--green); cursor: pointer; }
-#fileInput { display: none; }
+
+.drop-zone .icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.drop-zone p {
+  font-size: 13px;
+  color: var(--dark-green);
+}
+
+.drop-zone p span {
+  color: var(--green);
+  cursor: pointer;
+}
+
+#fileInput {
+  display: none;
+}
+
 .controls {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
+
 .ctrl-box {
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 0.75rem 1rem;
   background: var(--card-bg);
 }
+
 .ctrl-box label {
   font-size: 10px;
   letter-spacing: 2px;
@@ -84,6 +149,7 @@ body { background: transparent; }
   margin-bottom: 0.4rem;
   text-transform: uppercase;
 }
+
 .ctrl-box .val {
   font-family: 'VT323', monospace;
   font-size: 1.6rem;
@@ -92,16 +158,18 @@ body { background: transparent; }
   margin-bottom: 0.3rem;
   text-shadow: 0 0 6px var(--dark-green);
 }
+
 input[type=range] {
   width: 100%;
-  -webkit-appearance: none;
+  appearance: none;
   height: 4px;
   background: var(--dim-green);
   border-radius: 2px;
   outline: none;
 }
+
 input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
+  appearance: none;
   width: 14px;
   height: 14px;
   background: var(--green);
@@ -109,6 +177,7 @@ input[type=range]::-webkit-slider-thumb {
   cursor: pointer;
   box-shadow: 0 0 6px var(--green);
 }
+
 .status-bar {
   font-size: 11px;
   color: var(--dark-green);
@@ -122,7 +191,11 @@ input[type=range]::-webkit-slider-thumb {
   display: flex;
   align-items: center;
 }
-.status-bar .cursor { animation: blink 0.7s step-end infinite; }
+
+.status-bar .cursor {
+  animation: blink 0.7s step-end infinite;
+}
+
 #viz-canvas {
   width: 100%;
   height: 64px;
@@ -133,7 +206,13 @@ input[type=range]::-webkit-slider-thumb {
   margin-bottom: 1rem;
   image-rendering: pixelated;
 }
-.btn-row { display: flex; gap: 0.75rem; }
+
+.btn-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 .btn {
   font-family: 'VT323', monospace;
   font-size: 1.2rem;
@@ -147,69 +226,143 @@ input[type=range]::-webkit-slider-thumb {
   transition: all 0.1s;
   text-transform: uppercase;
 }
-.btn:hover { border-color: var(--green); background: #001a07; text-shadow: 0 0 6px var(--green); }
-.btn:active { transform: scale(0.97); }
-.btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
-.btn.primary { border-color: var(--green); background: #002b0d; }
-.progress-wrap { margin-bottom: 1rem; display: none; }
-.progress-bar { height: 6px; background: var(--dim-green); border-radius: 3px; overflow: hidden; }
-.progress-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.1s; box-shadow: 0 0 8px var(--green); }
-#downloadLink { display: none; }
+
+.btn:hover {
+  border-color: var(--green);
+  background: #001a07;
+  text-shadow: 0 0 6px var(--green);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn.primary {
+  border-color: var(--green);
+  background: #002b0d;
+}
+
+.progress-wrap {
+  margin-bottom: 1rem;
+  display: none;
+}
+
+.progress-bar {
+  height: 6px;
+  background: var(--dim-green);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--green);
+  width: 0%;
+  transition: width 0.1s;
+  box-shadow: 0 0 8px var(--green);
+}
+
+#downloadLink {
+  display: inline-block;
+}
 </style>
+</head>
+
+<body>
 
 <div id="app">
   <div class="content">
+
     <div class="title-bar">
       <span>BITCRUSHER</span>
       <span style="font-size:1rem; color: var(--dark-green)">v2.0</span>
       <span class="blink" style="font-size:1.4rem">█</span>
     </div>
-    <div class="subtitle">&gt; FULL LO-FI EXTREME CRUNCH MODE // MP3 → 8-BIT DESTROYER</div>
+
+    <div class="subtitle">
+      &gt; FULL LO-FI EXTREME CRUNCH MODE // MP3 → 8-BIT DESTROYER
+    </div>
 
     <div class="drop-zone" id="dropZone">
       <span class="icon">🎮</span>
-      <p>DRAG & DROP MP3 HERE<br><span onclick="document.getElementById('fileInput').click()">[ CLICK TO BROWSE ]</span></p>
-      <input type="file" id="fileInput" accept="audio/mp3,audio/mpeg,audio/*">
+      <p>
+        DRAG & DROP MP3 HERE<br>
+        <span onclick="document.getElementById('fileInput').click()">
+          [ CLICK TO BROWSE ]
+        </span>
+      </p>
+
+      <input
+        type="file"
+        id="fileInput"
+        accept="audio/mp3,audio/mpeg,audio/*"
+      >
     </div>
 
     <div class="controls">
+
       <div class="ctrl-box">
         <label>BIT DEPTH</label>
         <span class="val" id="bitsVal">4 BIT</span>
-        <input type="range" id="bitsSlider" min="1" max="8" value="4" step="1">
+        <input type="range" id="bitsSlider" min="1" max="8" value="4">
       </div>
+
       <div class="ctrl-box">
         <label>SAMPLE RATE REDUCTION</label>
         <span class="val" id="srVal">8x</span>
-        <input type="range" id="srSlider" min="1" max="16" value="8" step="1">
+        <input type="range" id="srSlider" min="1" max="16" value="8">
       </div>
+
       <div class="ctrl-box">
         <label>NOISE FLOOR</label>
         <span class="val" id="noiseVal">15%</span>
-        <input type="range" id="noiseSlider" min="0" max="40" value="15" step="1">
+        <input type="range" id="noiseSlider" min="0" max="40" value="15">
       </div>
+
       <div class="ctrl-box">
         <label>CRUNCH GAIN</label>
         <span class="val" id="gainVal">+4 dB</span>
-        <input type="range" id="gainSlider" min="-6" max="12" value="4" step="1">
+        <input type="range" id="gainSlider" min="-6" max="12" value="4">
       </div>
+
     </div>
 
     <canvas id="viz-canvas"></canvas>
 
     <div class="status-bar">
-      <span id="statusText">AWAITING INPUT...<span class="cursor">_</span></span>
+      <span id="statusText">
+        AWAITING INPUT...
+        <span class="cursor">_</span>
+      </span>
     </div>
 
     <div class="progress-wrap" id="progressWrap">
-      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
     </div>
 
     <div class="btn-row">
-      <button class="btn primary" id="crushBtn" disabled>[ CRUSH IT ]</button>
-      <button class="btn" id="previewBtn" disabled>[ PREVIEW ]</button>
-      <a id="downloadLink"><button class="btn" id="downloadBtn" disabled>[ DOWNLOAD ]</button></a>
+      <button class="btn primary" id="crushBtn" disabled>
+        [ CRUSH IT ]
+      </button>
+
+      <button class="btn" id="previewBtn" disabled>
+        [ PREVIEW ]
+      </button>
+
+      <a id="downloadLink">
+        <button class="btn" id="downloadBtn" disabled>
+          [ DOWNLOAD ]
+        </button>
+      </a>
     </div>
+
   </div>
 </div>
 
@@ -219,99 +372,163 @@ let sourceBuffer = null;
 let fileName = '';
 let crushedBuffer = null;
 let previewSource = null;
-let vizAnimId = null;
 
-const status = (msg) => { document.getElementById('statusText').innerHTML = msg + '<span class="cursor">_</span>'; };
+const status = (msg) => {
+  document.getElementById('statusText').innerHTML =
+    msg + '<span class="cursor">_</span>';
+};
 
 function getCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
   return audioCtx;
 }
 
 document.getElementById('bitsSlider').addEventListener('input', e => {
-  document.getElementById('bitsVal').textContent = e.target.value + ' BIT';
+  document.getElementById('bitsVal').textContent =
+    e.target.value + ' BIT';
 });
+
 document.getElementById('srSlider').addEventListener('input', e => {
-  document.getElementById('srVal').textContent = e.target.value + 'x';
+  document.getElementById('srVal').textContent =
+    e.target.value + 'x';
 });
+
 document.getElementById('noiseSlider').addEventListener('input', e => {
-  document.getElementById('noiseVal').textContent = e.target.value + '%';
+  document.getElementById('noiseVal').textContent =
+    e.target.value + '%';
 });
+
 document.getElementById('gainSlider').addEventListener('input', e => {
   const v = parseInt(e.target.value);
-  document.getElementById('gainVal').textContent = (v >= 0 ? '+' : '') + v + ' dB';
+
+  document.getElementById('gainVal').textContent =
+    (v >= 0 ? '+' : '') + v + ' dB';
 });
 
 const dropZone = document.getElementById('dropZone');
 const fileInput = document.getElementById('fileInput');
 
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('dragover', e => {
+  e.preventDefault();
+  dropZone.classList.add('drag-over');
+});
+
+dropZone.addEventListener('dragleave', () => {
+  dropZone.classList.remove('drag-over');
+});
+
 dropZone.addEventListener('drop', e => {
   e.preventDefault();
+
   dropZone.classList.remove('drag-over');
+
   const f = e.dataTransfer.files[0];
+
   if (f) loadFile(f);
 });
-fileInput.addEventListener('change', e => { if (e.target.files[0]) loadFile(e.target.files[0]); });
+
+fileInput.addEventListener('change', e => {
+  if (e.target.files[0]) {
+    loadFile(e.target.files[0]);
+  }
+});
 
 function loadFile(file) {
   fileName = file.name.replace(/\.[^.]+$/, '');
+
   status('LOADING: ' + file.name.toUpperCase());
+
   const reader = new FileReader();
+
   reader.onload = async (e) => {
     try {
       const ctx = getCtx();
+
       const buf = await ctx.decodeAudioData(e.target.result);
+
       sourceBuffer = buf;
+
       drawWaveform(buf, false);
-      status('LOADED: ' + file.name.toUpperCase() + ' [' + buf.duration.toFixed(1) + 's]');
+
+      status(
+        'LOADED: ' +
+        file.name.toUpperCase() +
+        ' [' +
+        buf.duration.toFixed(1) +
+        's]'
+      );
+
       document.getElementById('crushBtn').disabled = false;
       document.getElementById('previewBtn').disabled = false;
+
     } catch(err) {
+      console.error(err);
       status('ERROR: COULD NOT DECODE AUDIO FILE');
     }
   };
+
   reader.readAsArrayBuffer(file);
 }
 
 function drawWaveform(buffer, crunched) {
   const canvas = document.getElementById('viz-canvas');
   const ctx = canvas.getContext('2d');
+
   canvas.width = canvas.offsetWidth * window.devicePixelRatio;
   canvas.height = 64 * window.devicePixelRatio;
+
+  ctx.setTransform(1,0,0,1,0,0);
   ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-  const W = canvas.offsetWidth, H = 64;
+
+  const W = canvas.offsetWidth;
+  const H = 64;
+
   ctx.clearRect(0, 0, W, H);
+
   const data = buffer.getChannelData(0);
-  const step = Math.floor(data.length / W);
+  const step = Math.max(1, Math.floor(data.length / W));
+
   ctx.strokeStyle = crunched ? '#00ff41' : '#00b32c';
   ctx.lineWidth = 1;
+
   ctx.beginPath();
+
   for (let i = 0; i < W; i++) {
     let max = 0;
+
     for (let j = 0; j < step; j++) {
-      const v = Math.abs(data[i * step + j] || 0);
+      const v = Math.abs(data[(i * step) + j] || 0);
       if (v > max) max = v;
     }
+
     const h = Math.max(1, max * (H / 2) * 0.9);
     const mid = H / 2;
+
     if (i === 0) ctx.moveTo(i, mid - h);
     else ctx.lineTo(i, mid - h);
   }
+
   ctx.stroke();
+
   ctx.beginPath();
+
   for (let i = 0; i < W; i++) {
     let max = 0;
+
     for (let j = 0; j < step; j++) {
-      const v = Math.abs(data[i * step + j] || 0);
+      const v = Math.abs(data[(i * step) + j] || 0);
       if (v > max) max = v;
     }
+
     const h = Math.max(1, max * (H / 2) * 0.9);
     const mid = H / 2;
+
     if (i === 0) ctx.moveTo(i, mid + h);
     else ctx.lineTo(i, mid + h);
   }
+
   ctx.stroke();
 }
 
@@ -320,106 +537,215 @@ function bitcrush(buffer) {
   const srReduction = parseInt(document.getElementById('srSlider').value);
   const noiseAmt = parseInt(document.getElementById('noiseSlider').value) / 100;
   const gainDb = parseInt(document.getElementById('gainSlider').value);
+
   const gainLinear = Math.pow(10, gainDb / 20);
 
   const numChannels = buffer.numberOfChannels;
   const sampleRate = buffer.sampleRate;
   const length = buffer.length;
+
   const ctx = getCtx();
-  const out = ctx.createBuffer(numChannels, length, sampleRate);
+
+  const out = ctx.createBuffer(
+    numChannels,
+    length,
+    sampleRate
+  );
 
   const levels = Math.pow(2, bits);
   const step = 2 / levels;
 
   for (let c = 0; c < numChannels; c++) {
+
     const inp = buffer.getChannelData(c);
     const outp = out.getChannelData(c);
+
     let held = 0;
+
     for (let i = 0; i < length; i++) {
+
       if (i % srReduction === 0) {
+
         let s = inp[i] * gainLinear;
+
         s = Math.floor(s / step) * step;
+
         s = Math.max(-1, Math.min(1, s));
-        if (noiseAmt > 0) s += (Math.random() * 2 - 1) * noiseAmt * step;
+
+        if (noiseAmt > 0) {
+          s += (Math.random() * 2 - 1) * noiseAmt * step;
+        }
+
         s = Math.max(-1, Math.min(1, s));
+
         held = s;
       }
+
       outp[i] = held;
     }
   }
+
   return out;
 }
 
 document.getElementById('crushBtn').addEventListener('click', async () => {
+
   if (!sourceBuffer) return;
+
   status('CRUSHING... DEGRADING QUALITY WITH EXTREME PREJUDICE');
+
   document.getElementById('progressWrap').style.display = 'block';
+
   document.getElementById('progressFill').style.width = '0%';
-  
+
   await new Promise(r => setTimeout(r, 30));
+
   document.getElementById('progressFill').style.width = '40%';
+
   await new Promise(r => setTimeout(r, 50));
-  
+
   crushedBuffer = bitcrush(sourceBuffer);
-  
+
   document.getElementById('progressFill').style.width = '80%';
+
   await new Promise(r => setTimeout(r, 30));
 
   const wavBlob = bufferToWav(crushedBuffer);
+
   const url = URL.createObjectURL(wavBlob);
+
   const link = document.getElementById('downloadLink');
+
   link.href = url;
   link.download = fileName + '_8bit_crushed.wav';
+
   document.getElementById('downloadBtn').disabled = false;
 
   document.getElementById('progressFill').style.width = '100%';
+
   drawWaveform(crushedBuffer, true);
-  status('CRUSH COMPLETE. ' + crushedBuffer.duration.toFixed(1) + 's OF PURE CRUNCH READY.');
-  document.getElementById('progressWrap').style.display = 'none';
+
+  status(
+    'CRUSH COMPLETE. ' +
+    crushedBuffer.duration.toFixed(1) +
+    's OF PURE CRUNCH READY.'
+  );
+
+  setTimeout(() => {
+    document.getElementById('progressWrap').style.display = 'none';
+  }, 400);
 });
 
 document.getElementById('previewBtn').addEventListener('click', () => {
+
   if (!sourceBuffer) return;
-  if (previewSource) { try { previewSource.stop(); } catch(e){} }
+
+  if (previewSource) {
+    try {
+      previewSource.stop();
+    } catch(e){}
+  }
+
   const ctx = getCtx();
-  if (ctx.state === 'suspended') ctx.resume();
+
+  if (ctx.state === 'suspended') {
+    ctx.resume();
+  }
+
   const buf = crushedBuffer || bitcrush(sourceBuffer);
+
   previewSource = ctx.createBufferSource();
+
   previewSource.buffer = buf;
+
   previewSource.connect(ctx.destination);
+
   previewSource.start();
+
   status('PREVIEWING... BLASTING CRUNCH INTO YOUR EARS');
-  previewSource.onended = () => status('PREVIEW DONE. EARS SUFFICIENTLY DESTROYED.');
+
+  previewSource.onended = () => {
+    status('PREVIEW DONE. EARS SUFFICIENTLY DESTROYED.');
+  };
 });
 
 function bufferToWav(buffer) {
+
   const numChannels = buffer.numberOfChannels;
   const sampleRate = buffer.sampleRate;
   const length = buffer.length;
-  const arrayBuffer = new ArrayBuffer(44 + length * numChannels * 2);
+
+  const arrayBuffer = new ArrayBuffer(
+    44 + length * numChannels * 2
+  );
+
   const view = new DataView(arrayBuffer);
-  function writeStr(o, s) { for (let i = 0; i < s.length; i++) view.setUint8(o + i, s.charCodeAt(i)); }
+
+  function writeStr(offset, str) {
+    for (let i = 0; i < str.length; i++) {
+      view.setUint8(offset + i, str.charCodeAt(i));
+    }
+  }
+
   writeStr(0, 'RIFF');
-  view.setUint32(4, 36 + length * numChannels * 2, true);
+
+  view.setUint32(
+    4,
+    36 + length * numChannels * 2,
+    true
+  );
+
   writeStr(8, 'WAVE');
   writeStr(12, 'fmt ');
+
   view.setUint32(16, 16, true);
   view.setUint16(20, 1, true);
   view.setUint16(22, numChannels, true);
   view.setUint32(24, sampleRate, true);
-  view.setUint32(28, sampleRate * numChannels * 2, true);
+
+  view.setUint32(
+    28,
+    sampleRate * numChannels * 2,
+    true
+  );
+
   view.setUint16(32, numChannels * 2, true);
   view.setUint16(34, 16, true);
+
   writeStr(36, 'data');
-  view.setUint32(40, length * numChannels * 2, true);
+
+  view.setUint32(
+    40,
+    length * numChannels * 2,
+    true
+  );
+
   let offset = 44;
+
   for (let i = 0; i < length; i++) {
+
     for (let c = 0; c < numChannels; c++) {
-      const s = Math.max(-1, Math.min(1, buffer.getChannelData(c)[i]));
-      view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+
+      const s = Math.max(
+        -1,
+        Math.min(1, buffer.getChannelData(c)[i])
+      );
+
+      view.setInt16(
+        offset,
+        s < 0 ? s * 0x8000 : s * 0x7FFF,
+        true
+      );
+
       offset += 2;
     }
   }
-  return new Blob([arrayBuffer], { type: 'audio/wav' });
+
+  return new Blob([arrayBuffer], {
+    type: 'audio/wav'
+  });
 }
 </script>
+
+</body>
+</html>
